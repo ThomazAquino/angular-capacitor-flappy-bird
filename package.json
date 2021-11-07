@@ -7,6 +7,8 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "start": "nx serve",
     "build": "nx build",
+    "build:apk": "cd apps/web/android && ./gradlew.bat assembleDebug",
+    "build:install:apk": "cd apps/web/android && ./gradlew.bat installDebug",
     "test": "nx test"
   },
   "private": true,
@@ -19,7 +21,9 @@
     "@angular/platform-browser": "^12.2.0",
     "@angular/platform-browser-dynamic": "^12.2.0",
     "@angular/router": "^12.2.0",
+    "@capacitor/core": "^2.4.5",
     "@nrwl/angular": "13.1.2",
+    "@nxtend/capacitor": "11.1.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
@@ -32,6 +36,8 @@
     "@angular/cli": "~12.2.0",
     "@angular/compiler-cli": "^12.2.0",
     "@angular/language-service": "^12.2.0",
+    "@capacitor/android": "^2.4.5",
+    "@capacitor/ios": "^2.4.5",
     "@nrwl/cli": "13.1.2",
     "@nrwl/cypress": "13.1.2",
     "@nrwl/eslint-plugin-nx": "13.1.2",
