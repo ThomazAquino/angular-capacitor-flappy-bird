@@ -6,8 +6,13 @@
   "webDir": "../../dist/apps/web",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 0
+      "launchShowDuration": 6000,
+      "splashFullScreen": true
     }
+  },
+  "server": {
+    "url": "http://192.168.0.109:4200",
+    "cleartext": true
   },
   "cordova": {}
 }

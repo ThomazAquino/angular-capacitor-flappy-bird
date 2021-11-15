@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import * as gameElement from './game-elements';
+import { Plugins } from '@capacitor/core';
+const { SplashScreen, StatusBar } = Plugins;
 
 enum GameState {
   INITIAL_SCREEN,
@@ -42,8 +44,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   onResize() {
     // console.log('RESIZE', window.innerWidth, ' X ', window.innerHeight)
     if (this.context) {
-      this.context.canvas.width = window.innerWidth - 2;
-      this.context.canvas.height = window.innerHeight - 2;
+      this.context.canvas.width = window.innerWidth - 3;
+      this.context.canvas.height = window.innerHeight - 3;
     }
 
     this.screenSizeSubject.next();
@@ -51,6 +53,23 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor() {
     this.sprites.src = '/assets/sprites.png';
+    
+
+    const hideStatusBar = async () => {
+      await StatusBar.hide();
+    };
+
+    const test = async () => {
+      await SplashScreen.show({
+        showDuration: 10000,
+        autoHide: true
+      });
+
+    };
+    
+
+    hideStatusBar();
+
   }
 
   ngOnInit(): void {
@@ -58,10 +77,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    window.screen.orientation.lock('landscape');
+
     this.collisionSound.src = '/assets/audio/collision.mp3';
     this.context = this.canvas.nativeElement.getContext('2d');
-    this.context.canvas.width = window.innerWidth - 2;
-    this.context.canvas.height = window.innerHeight - 2;
+    this.context.canvas.width = window.innerWidth - 3;
+    this.context.canvas.height = window.innerHeight - 3;
     this.initializeGameElements();
 
     this.sprites.onload = () => {
