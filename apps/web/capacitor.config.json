@@ -6,8 +6,9 @@
   "webDir": "../../dist/apps/web",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 6000,
-      "splashFullScreen": true
+      "launchShowDuration": 1000,
+      "splashFullScreen": true,
+      "androidSplashResourceName": "splash"
     }
   },
   "server": {

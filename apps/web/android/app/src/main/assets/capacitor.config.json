@@ -6,7 +6,7 @@
   "webDir": "../../dist/apps/web",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 6000,
+      "launchShowDuration": 1000,
       "splashFullScreen": true
     }
   },
