@@ -10,6 +10,7 @@
     "build": "nx build",
     "build:apk": "cd apps/web/android && ./gradlew.bat assembleDebug",
     "build:install:apk": "cd apps/web/android && ./gradlew.bat installDebug",
+    "resources": "cordova-res android --skip-config --copy --icon-source apps/web/android/resources/icon.png --splash-source apps/web/android/resources/splash.png --icon-foreground-source apps/web/android/resources/android/icon-foreground.png --icon-background-source apps/web/android/resources/android/icon-background.png --android-project apps/web/android",
     "test": "nx test"
   },
   "private": true,

@@ -1307,6 +1307,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/status-bar/-/status-bar-1.0.6.tgz#d58c9087cfc7c7377e8009bea86152e4fdd2939e"
   integrity sha512-5MGWFq76iiKvHpbZ/Xc0Zig3WZyzWZ62wvC4qxak8OuVHBNG4fA1p/XXY9teQPaU3SupEJHnLkw6Gn1LuDp+ew==
 
+"@codetrix-studio/capacitor-google-auth@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@codetrix-studio/capacitor-google-auth/-/capacitor-google-auth-3.0.2.tgz#a095135311805bf1134bcf81a8246788008f3849"
+  integrity sha512-DsWwiBPkwWY/2F7JPq4mpNrKJYafpVZY+6Pq/ov5CeospRXJPauxEPHexo6uV6N5Yi6YIAwSBJqZhOZCdBURTg==
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"

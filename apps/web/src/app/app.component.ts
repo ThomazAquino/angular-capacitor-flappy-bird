@@ -66,6 +66,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
 
     };
+
+    // test();
     
 
     hideStatusBar();
