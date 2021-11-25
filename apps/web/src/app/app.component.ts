@@ -4,10 +4,15 @@ import * as gameElement from './game-elements';
 import { Plugins } from '@capacitor/core';
 const { SplashScreen, StatusBar } = Plugins;
 
-enum GameState {
+const enum GameState {
   INITIAL_SCREEN,
   GAME_OVER_SCREEN,
   PLAYING,
+}
+
+export const enum ScreenSizeHeightEvent {
+  INCREASING_HEIGH,
+  DECREASING_HEIGH,
 }
 
 @Component({
@@ -33,29 +38,31 @@ export class AppComponent implements OnInit, AfterViewInit {
   public frames = 0;
   public gameOver = true;
   public isWaitingForDelay = false;
-  public gameState: GameState = GameState.INITIAL_SCREEN;
-  // public gameState: GameState = GameState.PLAYING;
+  // public gameState: GameState = GameState.INITIAL_SCREEN;
+  public gameState: GameState = GameState.PLAYING;
 
-  public screenSizeSubject: Subject<void> = new Subject();
+  public screenSizeSubject: Subject<ScreenSizeHeightEvent> = new Subject();
+  public previousWindowHeight = window.innerHeight;
+  
 
   private sprites = new Image();
   private collisionSound = new Audio();
 
   @HostListener('window:resize', ['$event'])
-  onResize() {
-    // console.log('RESIZE', window.innerWidth, ' X ', window.innerHeight)
-    if (this.context) {
-      this.context.canvas.width = window.innerWidth - 3;
-      this.context.canvas.height = window.innerHeight - 3;
-    }
+  onResize(event: any) {
 
-    this.screenSizeSubject.next();
+    const screenSizeHeightEvent = event.target.innerHeight > this.previousWindowHeight ? ScreenSizeHeightEvent.INCREASING_HEIGH : ScreenSizeHeightEvent.DECREASING_HEIGH;
+    this.previousWindowHeight = event.target.innerHeight
+    if (this.context) {
+      this.context.canvas.width = event.target.innerWidth - 3;
+      this.context.canvas.height = event.target.innerHeight - 3;
+    }
+    this.screenSizeSubject.next(screenSizeHeightEvent);
   }
 
   constructor() {
     this.sprites.src = '/assets/sprites.png';
     
-
     const hideStatusBar = async () => {
       // await StatusBar.hide();
     };
@@ -80,7 +87,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    window.screen.orientation.lock('landscape');
+    // window.screen.orientation.lock('landscape');
 
     this.collisionSound.src = '/assets/audio/collision.mp3';
     this.context = this.canvas.nativeElement.getContext('2d');
@@ -109,8 +116,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     switch (this.gameState) {
       case GameState.INITIAL_SCREEN:
         this.backGround.draw();
-        // this.pipes.draw();
-        // this.pipes.update();
+        this.pipes.draw();
+        this.pipes.update();
         this.floor.update();
         this.floor.draw();
         this.bird.draw();

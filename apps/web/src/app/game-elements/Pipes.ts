@@ -1,5 +1,5 @@
-import { AppComponent } from "../app.component";
-import { getRandomBetweenRange, hasCollision } from "../helpers/functions";
+import { AppComponent, ScreenSizeHeightEvent } from "../app.component";
+import { getBiggerValue, getMinorValue, getRandomBetweenRange, hasCollision } from "../helpers/functions";
 
 export class Pipes {
   constructor(
@@ -8,8 +8,15 @@ export class Pipes {
     private sprites: HTMLImageElement,
     private that: AppComponent,
   ) {
-    this.that.screenSizeSubject.subscribe(() => {
-      // this._y = this.canvas.height - 204;
+    this.that.screenSizeSubject.subscribe((screenSizeHeightEvent: ScreenSizeHeightEvent) => {
+      this._maximumBottom = this.canvas.height - this.that.floor._height - this._gapBetweenPipes - (this._height * 2);
+
+      if (screenSizeHeightEvent === ScreenSizeHeightEvent.DECREASING_HEIGH) {
+        this._pipePairs.forEach(pipe => {
+          pipe.y = getMinorValue(pipe.y, this._maximumBottom);
+        });
+      } 
+      
     });
     // debugMode(this);
   }
@@ -20,31 +27,36 @@ export class Pipes {
   private _floorSpriteY = 545;
   private _bodySpriteX = 222;
   private _bodySpriteY = 545;
-
   private _width = 52;
   private _height = 24;
-  private _gapBetweenPipes = 90;
+
   private _collisionTrashHold = 3;
-  private _pipePairs: any[] = [];
   private _maximumYVariation = 200;
-  public _y = this.canvas.height - 112;
+
+  // Level based?
+  private _gapBetweenPipes = 90;
+  // private _repeatFrequency = 200;
+  private _repeatFrequency = 200;
+  
+  private _maximumTop = 0;
+  private _maximumBottom = this.canvas.height - this.that.floor._height - this._gapBetweenPipes - (this._height * 2);
+  private _pipePairs: any[] = [{x: this.canvas.width, y: getRandomBetweenRange(this._height, this._maximumBottom)}];
+
+
 
   public update(): void {
-    const frameChangeInterval = 100;
-    const isIntervalPassed = this.that.frames % frameChangeInterval === 0;
-    
-    if (isIntervalPassed) {
-      const maximumTop = 0;
-      const maximumBottom = this.canvas.height - this.that.floor._height - this._gapBetweenPipes - (this._height * 2) ;
 
-      const previousTop = (this._pipePairs[this._pipePairs.length - 1]?.y - 30) || 0;
-      const previousBottom = (this._pipePairs[this._pipePairs.length - 1]?.y + this._gapBetweenPipes) || 0;
+    const shouldAddNewPipe = this.canvas.width - this._pipePairs[this._pipePairs.length - 1].x >= this._repeatFrequency;
+    if (shouldAddNewPipe) {
 
-      const maximumAchievableCeilingValue = previousTop - this._maximumYVariation > maximumTop ? previousTop - this._maximumYVariation : maximumTop;
-      const maximumAchievableBottomValue = previousBottom + this._maximumYVariation < maximumBottom ? previousBottom + this._maximumYVariation : maximumBottom;
-
+      const previousTop = this._pipePairs[this._pipePairs.length - 1].y - 30;
+      const previousBottom = this._pipePairs[this._pipePairs.length - 1].y + this._gapBetweenPipes;
+      
+      const maximumAchievableCeilingValue = getBiggerValue(previousTop - this._maximumYVariation, this._maximumTop);
+      const maximumAchievableBottomValue = getMinorValue(previousBottom + this._maximumYVariation, this._maximumBottom);
+      
       this._pipePairs.push({
-        x: this.canvas.width,
+        x: this._pipePairs[this._pipePairs.length - 1]?.x + this._repeatFrequency,
         y: getRandomBetweenRange(maximumAchievableCeilingValue, maximumAchievableBottomValue)
       })
     }
@@ -65,7 +77,7 @@ export class Pipes {
         // Collision between head and ceiling pipe.
         if (hasCollision(pipe.ceilingPipe.y, this.that.bird._y + this._collisionTrashHold)) {
           // console.log('TOP', this.that.frames, pipe.ceilingPipe.y, this.that.bird._y + this._collisionTrashHold);
-          this.that.prepareToGaveOver();
+          this.reactToCollision();
           return true;
         }
 
@@ -73,7 +85,7 @@ export class Pipes {
         if (hasCollision((this.that.bird._y + this.that.bird._height), pipe.floorPipe.y + 3)) {
           // console.log('BOTTOM', this.that.frames, (this.that.bird._y + this.that.bird._height), pipe.floorPipe.y + 3);
 
-          this.that.prepareToGaveOver();
+          this.reactToCollision();
           return true;
         }
       }
@@ -139,93 +151,106 @@ export class Pipes {
       }
     });
   }
+
+  reactToCollision() {
+    this.that.prepareToGaveOver();
+  }
 }
+
+
+function debugMode(that: any) {
+  that._pipePairs = FAKE_PIPES;
+  that.reactToCollision = () => {console.log('COLLISION')}
+
+
+  document.addEventListener('click', e => that.that.bird.jump(e.clientX, e.clientY));
+  that.that.bird._gravity = 0;
+  that.that.bird.jump = (x: number, y: number) => { that.that.bird._x = x, that.that.bird._y = y }
+
+  that.that.floor.update = () => {};
+
+
+  document.addEventListener("keydown", event => {
+    switch (event.key) {
+      case 'ArrowLeft':
+        that.that.bird._x -= 1;
+        break;
+      case 'a':
+        that.that.bird._x -= 20;
+        break;
+
+      case 'ArrowRight':
+        that.that.bird._x += 1;
+        break;
+      case 'd':
+        that.that.bird._x += 20;
+        break;
+
+        case 'ArrowUp':
+          that.that.bird._y -= 1;
+          break;
+        case 'w':
+          that.that.bird._y -= 20;
+          break;
+
+        case 'ArrowDown':
+          that.that.bird._y += 1;
+          break;
+        case 's':
+          that.that.bird._y += 20;
+          break;
+    }
+  });
+}
+
 
 const FAKE_PIPES = [
   {
-      "x": 499,
-      "y": 151.51497512631084,
-      "ceilingPipe": {
-          "x": 501,
-          "y": 175.51497512631084
-      },
-      "floorPipe": {
-          "x": 501,
-          "y": 265.51497512631084
-      }
+    x: 499,
+    y: 151,
+    ceilingPipe: {
+      x: 501,
+      y: 175
+    },
+    floorPipe: {
+      x: 501,
+      y: 265
+    }
   },
   {
-      "x": 699,
-      "y": 183.9215409604809,
-      "ceilingPipe": {
-          "x": 701,
-          "y": 207.9215409604809
-      },
-      "floorPipe": {
-          "x": 701,
-          "y": 297.9215409604809
-      }
+    x: 699,
+    y: 183,
+    ceilingPipe: {
+      x: 701,
+      y: 207
+    },
+    floorPipe: {
+      x: 701,
+      y: 297
+    }
   },
   {
-      "x": 899,
-      "y": 654.0484526846183,
-      "ceilingPipe": {
-          "x": 901,
-          "y": 678.0484526846183
-      },
-      "floorPipe": {
-          "x": 901,
-          "y": 768.0484526846183
-      }
+    x: 899,
+    y: 654,
+    ceilingPipe: {
+      x: 901,
+      y: 678
+    },
+    floorPipe: {
+      x: 901,
+      y: 768
+    }
   },
   {
-      "x": 1099,
-      "y": 495.2711446332272,
-      "ceilingPipe": {
-          "x": 1101,
-          "y": 519.2711446332272
-      },
-      "floorPipe": {
-          "x": 1101,
-          "y": 609.2711446332272
-      }
+    x: 1099,
+    y: 495,
+    ceilingPipe: {
+      x: 1101,
+      y: 519
+    },
+    floorPipe: {
+      x: 1101,
+      y: 609
+    }
   }
 ];
-
-function debugMode(that: any) {
-  that.that.bird._gravity = 0;
-    that.that.bird.jump = ()=>{}
-    // that.that.bird._x = that.canvas.width / 2
-
-    document.addEventListener("keydown", event => {
-     switch (event.key) {
-       case 'ArrowLeft':
-         that.that.bird._x -= 1;
-         break;
-       case 'a':
-         that.that.bird._x -= 10;
-         break;
-
-       case 'ArrowRight':
-         that.that.bird._x += 1;
-         break;
-       case 'd':
-         that.that.bird._x += 10;
-         break;
-
-         case 'ArrowUp':
-           that.that.bird._y -= 1;
-           break;
-         case 'w':
-           that.that.bird._y -= 10;
-           break;
- 
-         case 'ArrowDown':
-           that.that.bird._y += 1;
-           break;
-         case 's':
-           that.that.bird._y += 10;
-           break;
-     }
-   });
-}
