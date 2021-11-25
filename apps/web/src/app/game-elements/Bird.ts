@@ -8,18 +8,18 @@ export class Bird {
     private sprites: HTMLImageElement,
     private that: AppComponent,
   ) {}
-  public _width = 33;
+  public _width = 34;
   public _height = 24;
   public _x = 10;
   public _y = 50;
-  private _gravity = 0.25;
-  private _speed = 0;
+  public _gravity = 0.25;
+  private _fallingSpeed = 0;
   private _jumpSize = 4.5;
   private _currentSpriteFrame = 0;
   private _movements = [
     {spriteX: 0, spriteY: 0 },
     {spriteX: 0, spriteY: 26 },
-    {spriteX: 0, spriteY: 51 },
+    {spriteX: 0, spriteY: 52 },
     {spriteX: 0, spriteY: 26 },
   ];
 
@@ -30,13 +30,13 @@ export class Bird {
       return;
     }
 
-    this._speed = this._speed + this._gravity;
-    this._y = this._y + this._speed;
+    this._fallingSpeed = this._fallingSpeed + this._gravity;
+    this._y = this._y + this._fallingSpeed;
   }
 
   public jump(): void {
-    this._speed = - this._jumpSize;
-    this._y = this._y + this._speed;
+    this._fallingSpeed = - this._jumpSize;
+    this._y = this._y + this._fallingSpeed;
   }
 
   public updateSpriteFrame(): void {

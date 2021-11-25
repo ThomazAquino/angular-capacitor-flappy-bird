@@ -6,5 +6,9 @@ export function hasCollision(pointA: number, pointB: number): boolean {
 
 /* Returns an random number between a range. **/
 export function getRandomBetweenRange(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
+  console.log('random ->', min, max)
+  return parseInt((
+    Math.random() * (max - min) + min
+    // Math.floor(Math.random() * max) + min
+    ).toFixed(0));
 }

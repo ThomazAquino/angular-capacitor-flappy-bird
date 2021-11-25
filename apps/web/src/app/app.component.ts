@@ -34,6 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public gameOver = true;
   public isWaitingForDelay = false;
   public gameState: GameState = GameState.INITIAL_SCREEN;
+  // public gameState: GameState = GameState.PLAYING;
 
   public screenSizeSubject: Subject<void> = new Subject();
 
@@ -56,7 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     
 
     const hideStatusBar = async () => {
-      await StatusBar.hide();
+      // await StatusBar.hide();
     };
 
     const test = async () => {
@@ -108,6 +109,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     switch (this.gameState) {
       case GameState.INITIAL_SCREEN:
         this.backGround.draw();
+        // this.pipes.draw();
+        // this.pipes.update();
         this.floor.update();
         this.floor.draw();
         this.bird.draw();
